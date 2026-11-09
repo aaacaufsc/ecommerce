@@ -32,15 +32,15 @@ O desenvolvimento seguirá uma abordagem estruturada em fases ordenadas por depe
 
 A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as entidades do **SPEC** e as camadas do **DESIGN**:
 
-| Task ID | Requisito PRD | Entidades Afetadas | Camadas Impactadas | Setor Responsável no Sistema |
-| :--- | :--- | :--- | :--- | :--- |
-| **TASK-001** | RNF01, RNF02 | Todas | Infraestrutura / Config | Presidência / TI |
-| **TASK-002** | RNF02 | As 12 tabelas do DDL | Database / Model | Presidência / TI |
-| **TASK-003** | RNF01, RNF03 | Todas | Middlewares Base / Utils | Presidência / TI |
-| **TASK-010** | RF02, RF13 | `Cargo` | Model, Repo, Svc, Ctrl, Routes | Gestão de Pessoas / TI |
-| **TASK-011** | RF01, RF02, RF03 | `Usuario`, `Cargo` | Model, Repo, Svc, Ctrl, Routes | Gestão de Pessoas / TI |
-| **TASK-012** | RF13, RNF03 | `Usuario`, `Cargo` | MiddleWare (`ensureSector`, JWT) | TI / Presidência |
-| **TASK-020** | RF04, RF05, RF06 | `Vestuario` | Model, Repo, Svc, Ctrl, Routes | Comercial (Produto) |
+| Task ID | Requisito PRD | Entidades Afetadas | Camadas Impactadas | Setor Responsável no Sistema | Status |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| **TASK-001** | RNF01, RNF02 | Todas | Infraestrutura / Config | Presidência / TI | ✅ Concluído |
+| **TASK-002** | RNF02 | As 12 tabelas do DDL | Database / Model | Presidência / TI | ✅ Concluído |
+| **TASK-003** | RNF01, RNF03 | Todas | Middlewares Base / Utils | Presidência / TI | ✅ Concluído |
+| **TASK-010** | RF02, RF13 | `Cargo` | Model, Repo, Svc, Ctrl, Routes | Gestão de Pessoas / TI | ✅ Concluído |
+| **TASK-011** | RF01, RF02, RF03 | `Usuario`, `Cargo` | Model, Repo, Svc, Ctrl, Routes | Gestão de Pessoas / TI | ✅ Concluído |
+| **TASK-012** | RF13, RNF03 | `Usuario`, `Cargo` | MiddleWare (`ensureSector`, JWT) | TI / Presidência | ✅ Concluído |
+| **TASK-020** | RF04, RF05, RF06 | `Vestuario` | Model, Repo, Svc, Ctrl, Routes | Comercial (Produto) | ⏳ Pendente |
 | **TASK-021** | RF04, RF05, RF06 | `Objeto` | Model, Repo, Svc, Ctrl, Routes | Comercial (Produto) |
 | **TASK-030** | RF10.1 | `Local` | Model, Repo, Svc, Ctrl, Routes | Esportes / Comercial / TI |
 | **TASK-031** | RF10.2 | `DJ`, `EventoDJ` | Model, Repo, Svc, Ctrl, Routes | Comercial (Marketing) |
@@ -60,9 +60,9 @@ A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as enti
 
 ---
 
-### Fase 0: Setup do Ambiente e Fundação de Dados
+### Fase 0: Setup do Ambiente e Fundação de Dados [✅ Concluída]
 
-#### `TASK-001` — Inicialização do Projeto e Configuração da Toolchain
+#### `TASK-001` — Inicialização do Projeto e Configuração da Toolchain [✅ Concluída]
 * **Objetivo**: Configurar o ambiente Node.js com TypeScript, scripts de build, linter e variáveis de ambiente.
 * **Entidades Afetadas**: Nenhuma diretamente (infraestrutura de código).
 * **Requisitos**: RNF01, RNF02.
@@ -75,7 +75,7 @@ A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as enti
 
 ---
 
-#### `TASK-002` — Configuração do Prisma ORM e Migração do Esquema DDL
+#### `TASK-002` — Configuração do Prisma ORM e Migração do Esquema DDL [✅ Concluída]
 * **Objetivo**: Configurar o Prisma Client e espelhar integralmente o script `logico_corrigido.sql` no PostgreSQL.
 * **Entidades Afetadas**: As 12 tabelas do banco: `Cargo`, `Usuario`, `Local`, `Evento`, `DJ`, `EventoDJ`, `Ingresso`, `Vestuario`, `Objeto`, `FormaPagamento`, `Compra`, `CompraItem`, `CompraFormaPagamento`.
 * **Requisitos**: RNF02.
@@ -88,7 +88,7 @@ A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as enti
 
 ---
 
-#### `TASK-003` — Camada Base de Erros e Middlewares Globais
+#### `TASK-003` — Camada Base de Erros e Middlewares Globais [✅ Concluída]
 * **Objetivo**: Padronizar o tratamento de exceções e a interceptação de erros da aplicação.
 * **Requisitos**: RNF01, RNF03.
 * **Passos de Execução**:
@@ -99,9 +99,9 @@ A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as enti
 
 ---
 
-### Fase 1: Módulo de Governança, Cargos e Autenticação
+### Fase 1: Módulo de Governança, Cargos e Autenticação [✅ Concluída]
 
-#### `TASK-010` — Implementação das Camadas de `Cargo`
+#### `TASK-010` — Implementação das Camadas de `Cargo` [✅ Concluída]
 * **Objetivo**: Permitir o cadastro e consulta de cargos da gestão e definição de seus setores e permissões.
 * **Entidades Afetadas**: `Cargo`.
 * **Requisitos**: RF02, RF13.
@@ -115,7 +115,7 @@ A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as enti
 
 ---
 
-#### `TASK-011` — Implementação das Camadas de `Usuario` (Cadastro e Perfil)
+#### `TASK-011` — Implementação das Camadas de `Usuario` (Cadastro e Perfil) [✅ Concluída]
 * **Objetivo**: Viabilizar o registro de estudantes e membros da gestão, incluindo hash de senha e validação de dados únicos.
 * **Entidades Afetadas**: `Usuario`, `Cargo`.
 * **Requisitos**: RF01, RF02, RF03, RNF03.
@@ -132,7 +132,7 @@ A tabela a seguir correlaciona cada tarefa com os requisitos do **PRD**, as enti
 
 ---
 
-#### `TASK-012` — Camada de Autenticação JWT e Middleware de Setores (`MiddleWare`)
+#### `TASK-012` — Camada de Autenticação JWT e Middleware de Setores (`MiddleWare`) [✅ Concluída]
 * **Objetivo**: Implementar a camada específica de segurança e autorização descrita no diagrama de fluxo do backend.
 * **Entidades Afetadas**: `Usuario`, `Cargo`.
 * **Requisitos**: RF13, RNF03.

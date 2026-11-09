@@ -1,0 +1,203 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// TABELAS BASE: CARGO E USUÁRIO (GESTAO)
+// -------------------------------------------------------------
+
+model Cargo {
+  idCargo    Int       @id @default(autoincrement()) @map("idcargo")
+  nome       String    @db.VarChar(50)
+  setor      String?   @db.VarChar(50)
+  descricao  String?   @db.VarChar(255)
+  permissoes String?   @db.VarChar(255)
+
+  usuarios   Usuario[]
+
+  @@map("cargo")
+}
+
+model Usuario {
+  idUsuario    Int       @id @default(autoincrement()) @map("idusuario")
+  idCargo      Int?      @map("idcargo")
+  nome         String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(100)
+  cpf          String    @unique @db.VarChar(11)
+  matricula    String?   @unique @db.VarChar(20)
+  endereco     String?   @db.VarChar(255)
+  telefone     String?   @db.VarChar(15)
+  curso        String?   @db.VarChar(50)
+  dtNascimento DateTime? @map("dtnascimento") @db.Date
+  gestao       Boolean   @default(false)
+  passwordHash String    @default("") @map("password_hash") @db.VarChar(255)
+
+  cargo        Cargo?    @relation(fields: [idCargo], references: [idCargo], onDelete: SetNull)
+  compras      Compra[]
+
+  @@map("usuario")
+}
+
+// -------------------------------------------------------------
+// TABELAS DE EVENTOS, LOCAIS E ATRAÇÕES (DJ)
+// -------------------------------------------------------------
+
+model Local {
+  idLocal  Int      @id @default(autoincrement()) @map("idlocal")
+  nome     String   @db.VarChar(100)
+  rua      String?  @db.VarChar(150)
+  numero   Int?
+  bairro   String?  @db.VarChar(50)
+  cidade   String?  @db.VarChar(50)
+  estado   String?  @db.VarChar(2)
+  telefone String?  @db.VarChar(15)
+
+  eventos  Evento[]
+
+  @@map("local")
+}
+
+model Evento {
+  idEvento   Int        @id @default(autoincrement()) @map("idevento")
+  idLocal    Int?       @map("idlocal")
+  nome       String     @db.VarChar(100)
+  descricao  String?    @db.VarChar(255)
+  dataEvento DateTime   @map("dataevento") @db.Date
+  horario    DateTime?  @db.Time(6)
+
+  local      Local?     @relation(fields: [idLocal], references: [idLocal], onDelete: SetNull)
+  ingressos  Ingresso[]
+  eventoDjs  EventoDJ[]
+
+  @@map("evento")
+}
+
+model DJ {
+  idDJ      Int        @id @default(autoincrement()) @map("iddj")
+  nome      String     @db.VarChar(100)
+  telefone  String?    @db.VarChar(15)
+  estilo    String?    @db.VarChar(50)
+  spotify   String?    @db.VarChar(255)
+  instagram String?    @db.VarChar(100)
+  email     String?    @db.VarChar(100)
+
+  eventoDjs EventoDJ[]
+
+  @@map("dj")
+}
+
+model EventoDJ {
+  idEvento Int @map("idevento")
+  idDJ     Int @map("iddj")
+
+  evento   Evento @relation(fields: [idEvento], references: [idEvento], onDelete: Cascade)
+  dj       DJ     @relation(fields: [idDJ], references: [idDJ], onDelete: Cascade)
+
+  @@id([idEvento, idDJ])
+  @@map("eventodj")
+}
+
+// -------------------------------------------------------------
+// TABELAS DE PRODUTOS: INGRESSO, VESTUÁRIO E OBJETO
+// -------------------------------------------------------------
+
+model Ingresso {
+  idIngresso  Int          @id @default(autoincrement()) @map("idingresso")
+  idEvento    Int          @map("idevento")
+  nome        String       @db.VarChar(100)
+  tipo        String?      @db.VarChar(50)
+  valor       Decimal      @db.Decimal(10, 2)
+
+  evento      Evento       @relation(fields: [idEvento], references: [idEvento], onDelete: Cascade)
+  compraItens CompraItem[]
+
+  @@map("ingresso")
+}
+
+model Vestuario {
+  idVestuario  Int          @id @default(autoincrement()) @map("idvestuario")
+  nome         String       @db.VarChar(100)
+  tamanho      String?      @db.VarChar(5)
+  valor        Decimal      @db.Decimal(10, 2)
+  cor          String?      @db.VarChar(30)
+  categoria    String?      @db.VarChar(50)
+  customizacao String?      @db.VarChar(255)
+
+  compraItens  CompraItem[]
+
+  @@map("vestuario")
+}
+
+model Objeto {
+  idObjeto     Int          @id @default(autoincrement()) @map("idobjeto")
+  nome         String       @db.VarChar(100)
+  cor          String?      @db.VarChar(30)
+  customizacao String?      @db.VarChar(255)
+  valor        Decimal      @db.Decimal(10, 2)
+
+  compraItens  CompraItem[]
+
+  @@map("objeto")
+}
+
+// -------------------------------------------------------------
+// TABELAS DE VENDAS E FORMAS DE PAGAMENTO
+// -------------------------------------------------------------
+
+model FormaPagamento {
+  idFormaPagamento      Int                     @id @default(autoincrement()) @map("idformapagamento")
+  descricao             String                  @db.VarChar(50)
+
+  compraFormasPagamento CompraFormaPagamento[]
+
+  @@map("formapagamento")
+}
+
+model Compra {
+  idCompra              Int                     @id @default(autoincrement()) @map("idcompra")
+  idUsuario             Int                     @map("idusuario")
+  dataPedido            DateTime                @map("datapedido") @db.Date
+  valorTotal            Decimal                 @map("valortotal") @db.Decimal(10, 2)
+  dataRetirada          DateTime?               @map("dataretirada") @db.Date
+
+  usuario               Usuario                 @relation(fields: [idUsuario], references: [idUsuario], onDelete: Restrict)
+  itens                 CompraItem[]
+  compraFormasPagamento CompraFormaPagamento[]
+
+  @@map("compra")
+}
+
+model CompraItem {
+  idCompraItem  Int        @id @default(autoincrement()) @map("idcompraitem")
+  idCompra      Int        @map("idcompra")
+  idVestuario   Int?       @map("idvestuario")
+  idObjeto      Int?       @map("idobjeto")
+  idIngresso    Int?       @map("idingresso")
+  quantidade    Int        @default(1)
+  valorUnitario Decimal    @map("valorunitario") @db.Decimal(10, 2)
+  descricao     String?    @db.VarChar(255)
+
+  compra        Compra     @relation(fields: [idCompra], references: [idCompra], onDelete: Cascade)
+  vestuario     Vestuario? @relation(fields: [idVestuario], references: [idVestuario], onDelete: SetNull)
+  objeto        Objeto?    @relation(fields: [idObjeto], references: [idObjeto], onDelete: SetNull)
+  ingresso      Ingresso?  @relation(fields: [idIngresso], references: [idIngresso], onDelete: SetNull)
+
+  @@map("compraitem")
+}
+
+model CompraFormaPagamento {
+  idCompraFormaPagamento Int            @id @default(autoincrement()) @map("idcompraformapagamento")
+  idCompra               Int            @map("idcompra")
+  idFormaPagamento       Int            @map("idformapagamento")
+  valorPago              Decimal?       @map("valorpago") @db.Decimal(10, 2)
+
+  compra                 Compra         @relation(fields: [idCompra], references: [idCompra], onDelete: Cascade)
+  formaPagamento         FormaPagamento @relation(fields: [idFormaPagamento], references: [idFormaPagamento], onDelete: Restrict)
+
+  @@map("compraformapagamento")
+}
